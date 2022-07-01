@@ -18,6 +18,7 @@ jobs:
     with:
       ghc_version: "8.10"
       cabal_version: "3.6"
+      ignore_uploaded_package: true
     secrets:
       HACKAGE_USERNAME: ${{ secrets.HACKAGE_USERNAME }}
       HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
