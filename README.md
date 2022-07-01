@@ -2,11 +2,6 @@
 
 GitHub Actions [reusable workflows][reusable-workflows].
 
-## How it works / motivation / purpose
-
-Promote the library/project explaining how it works. You can also add the
-motiviation for writing the library or explain its porpuse in this section.
-
 ## Usage
 
 The following section describes the usage of the different reusable workflows
