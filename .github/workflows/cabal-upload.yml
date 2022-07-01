@@ -1,0 +1,46 @@
+---
+on:
+  workflow_call:
+    inputs:
+      ghc_version:
+        type: string
+        required: true
+        default: "8.10"
+      cabal_version:
+        type: string
+        required: true
+        default: "3.6"
+    secrets:
+      HACKAGE_USERNAME:
+        required: true
+      HACKAGE_PASSWORD:
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup tooling
+        uses: haskell/actions/setup@v2
+        with:
+          ghc-version: ${{ inputs.ghc_version }}
+          cabal-version: ${{ inputs.cabal_version }}
+      - name: Generate a source distribution file
+        run: cabal sdist
+      - name: Upload package to Hackage
+        run: |
+          cabal upload --publish \
+            --username "${{ secrets.HACKAGE_USERNAME }}" \
+            --password "${{ secrets.HACKAGE_PASSWORD }}" \
+            dist-newstyle/sdist/*.tar.gz
+      - name: Build documentation
+        run: cabal v2-haddock --haddock-for-hackage --enable-documentation
+      - name: Upload documentation to Hackage
+        run: |
+          cabal upload --publish \
+            --username "${{ secrets.HACKAGE_USERNAME }}" \
+            --password "${{ secrets.HACKAGE_PASSWORD }}" \
+            --documentation \
+            dist-newstyle/*-docs.tar.gz
