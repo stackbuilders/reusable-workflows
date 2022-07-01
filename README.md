@@ -9,7 +9,7 @@ offered by this repository.
 
 ### [cabal-upload](.github/workflows/cabal-upload.yml)
 
-Uploads a source package and documentation to Hackage.
+Uploads source package and documentation to Hackage.
 
 ```yml
 jobs:

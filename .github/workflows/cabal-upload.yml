@@ -3,14 +3,17 @@ on:
   workflow_call:
     inputs:
       ghc_version:
+        description: "GHC version to be installed"
         type: string
         required: false
         default: "8.10"
       cabal_version:
+        description: "Cabal version to be installed"
         type: string
         required: false
         default: "3.6"
       ignore_uploaded_package:
+        description: "Ignores a previously uploaded version to Hackage"
         type: boolean
         required: false
         default: true
