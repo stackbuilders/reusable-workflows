@@ -41,6 +41,7 @@ jobs:
             dist-newstyle/sdist/*.tar.gz
         continue-on-error: ${{ inputs.ignore_uploaded_package }}
       - name: Build documentation
+        if: always()
         run: cabal v2-haddock --haddock-for-hackage --enable-documentation
       - name: Upload documentation to Hackage
         run: |
