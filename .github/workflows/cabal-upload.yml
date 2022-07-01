@@ -10,10 +10,6 @@ on:
         type: string
         required: false
         default: "3.6"
-      ignore_uploaded_package:
-        type: boolean
-        required: false
-        default: true
     secrets:
       HACKAGE_USERNAME:
         required: true
@@ -31,7 +27,7 @@ jobs:
         with:
           ghc-version: ${{ inputs.ghc_version }}
           cabal-version: ${{ inputs.cabal_version }}
-      - name: Generate a source distribution file
+      - name: Generate package
         run: cabal sdist
       - name: Upload package to Hackage
         run: |
@@ -39,9 +35,8 @@ jobs:
             --username "${{ secrets.HACKAGE_USERNAME }}" \
             --password "${{ secrets.HACKAGE_PASSWORD }}" \
             dist-newstyle/sdist/*.tar.gz
-        continue-on-error: ${{ inputs.ignore_uploaded_package }}
-      - name: Build documentation
-        if: always()
+      - name: Generate documentation
+        if: ${{ always() }}
         run: cabal v2-haddock --haddock-for-hackage --enable-documentation
       - name: Upload documentation to Hackage
         run: |
