@@ -24,7 +24,7 @@ on:
         required: true
       eb_use_existing_version_if_available:
         description: "Deploy a version already in Elastic Beanstalk if it exists"
-        type: bool
+        type: boolean
         required: false
         default: true
     secrets:
