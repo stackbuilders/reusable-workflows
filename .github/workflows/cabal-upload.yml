@@ -31,6 +31,17 @@ jobs:
         with:
           ghc-version: ${{ inputs.ghc_version }}
           cabal-version: ${{ inputs.cabal_version }}
+      - name: Freeze dependencies
+        run: cabal freeze
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('*.cabal', 'cabal.project.freeze') }}
+          restore-keys: ${{ runner.os }}-
+          path: |
+            ~/.cabal/packages
+            ~/.cabal/store
+            dist-newstyle
       - name: Generate package
         run: cabal sdist
       - name: Upload package to Hackage
