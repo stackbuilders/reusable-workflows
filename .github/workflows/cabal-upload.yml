@@ -1,0 +1,65 @@
+---
+on:
+  workflow_call:
+    inputs:
+      ghc_version:
+        description: "GHC version to be installed"
+        type: string
+        required: false
+        default: "8.10"
+      cabal_version:
+        description: "Cabal version to be installed"
+        type: string
+        required: false
+        default: "3.6"
+      ignore_uploaded_package:
+        description: "Ignores a previously uploaded version to Hackage"
+        type: boolean
+        required: false
+        default: true
+    secrets:
+      HACKAGE_USERNAME:
+        required: true
+      HACKAGE_PASSWORD:
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup tooling
+        uses: haskell/actions/setup@v2
+        with:
+          ghc-version: ${{ inputs.ghc_version }}
+          cabal-version: ${{ inputs.cabal_version }}
+      - name: Freeze dependencies
+        run: cabal freeze
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('*.cabal', 'cabal.project.freeze') }}
+          restore-keys: ${{ runner.os }}-
+          path: |
+            ~/.cabal/packages
+            ~/.cabal/store
+            dist-newstyle
+      - name: Generate package
+        run: cabal sdist
+      - name: Upload package to Hackage
+        run: |
+          cabal upload --publish \
+            --username "${{ secrets.HACKAGE_USERNAME }}" \
+            --password "${{ secrets.HACKAGE_PASSWORD }}" \
+            dist-newstyle/sdist/*.tar.gz
+        continue-on-error: ${{ inputs.ignore_uploaded_package }}
+      - name: Generate documentation
+        run: cabal v2-haddock --haddock-for-hackage --enable-documentation
+      - name: Upload documentation to Hackage
+        run: |
+          cabal upload --publish \
+            --username "${{ secrets.HACKAGE_USERNAME }}" \
+            --password "${{ secrets.HACKAGE_PASSWORD }}" \
+            --documentation \
+            dist-newstyle/*-docs.tar.gz
