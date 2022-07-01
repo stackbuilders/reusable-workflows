@@ -4,11 +4,11 @@ on:
     inputs:
       ghc_version:
         type: string
-        required: true
+        required: false
         default: "8.10"
       cabal_version:
         type: string
-        required: true
+        required: false
         default: "3.6"
     secrets:
       HACKAGE_USERNAME:
@@ -27,6 +27,7 @@ jobs:
         with:
           ghc-version: ${{ inputs.ghc_version }}
           cabal-version: ${{ inputs.cabal_version }}
+
       - name: Generate a source distribution file
         run: cabal sdist
       - name: Upload package to Hackage

@@ -7,6 +7,22 @@ GitHub Actions [reusable workflows][reusable-workflows].
 The following section describes the usage of the different reusable workflows
 offered by this repository.
 
+### [cabal-upload](.github/workflows/cabal-upload.yml)
+
+Uploads a source package and documentation to Hackage.
+
+```yml
+jobs:
+  call-cabal-upload:
+    uses: stackbuilders/reusable-workflows/.github/workflows/cabal-upload.yml@main
+    with:
+      ghc_version: "8.10"
+      cabal_version: "3.6"
+    secrets:
+      HACKAGE_USERNAME: ${{ secrets.HACKAGE_USERNAME }}
+      HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
+```
+
 ### [eb-deploy](.github/workflows/eb-deploy.yml)
 
 Creates a zip file via git archive and deploys an application version via
