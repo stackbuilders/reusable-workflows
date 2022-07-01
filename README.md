@@ -12,7 +12,7 @@ motiviation for writing the library or explain its porpuse in this section.
 The following section describes the usage of the different reusable workflows
 offered by this repository.
 
-**[eb-deploy](.github/workflows/eb-deploy.yml)**
+### [eb-deploy](.github/workflows/eb-deploy.yml)
 
 Creates a zip file via git archive and deploys an application version via
 [beanstalk-deploy][beanstalk-deploy]
