@@ -1,0 +1,55 @@
+---
+on:
+  workflow_call:
+    inputs:
+      environment_name:
+        description: "GitHub deployment target name"
+        type: string
+        required: true
+      environment_url:
+        description: "GitHub deployment target URL"
+        type: string
+        required: false
+      eb_application_name:
+        description: "AWS Elastic Beanstalk application name"
+        type: string
+        required: true
+      eb_environment_name:
+        description: "Elastic Beanstalk environment name"
+        type: string
+        required: true
+      eb_region:
+        description: "Elastic Beanstalk environment region"
+        type: string
+        required: true
+      eb_use_existing_version_if_available:
+        description: "Deploy a version already in Elastic Beanstalk if it exists"
+        type: bool
+        required: false
+        default: true
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment_name }}
+      url: ${{ inputs.environment_url }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: git archive --format zip --output deploy.zip ${{ github.sha }}
+      - uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ inputs.eb_application_name }}
+          environment_name: ${{ inputs.eb_environment_name }}
+          version_label: ${{ github.sha }}
+          region: ${{ inputs.eb_region }}
+          deployment_package: deploy.zip
+          use_existing_version_if_available: ${{ inputs.eb_use_existing_version_if_available }}
